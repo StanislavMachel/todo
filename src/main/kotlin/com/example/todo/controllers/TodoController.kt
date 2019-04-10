@@ -13,14 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/todo")
 @RestController
 
-class TodoController(private val todoItemRepository: TodoItemRepository) {
-//    companion object {
-//        val todos : MutableList<TodoItem> =  mutableListOf(
-//                TodoItem(1, "Cook dishes", false),
-//                TodoItem(2, "Clean the floor", false),
-//                TodoItem(3, "Water plants", false)
-//        )
-//    }
+class TodoController(private val todoItemRepository : TodoItemRepository) {
 
     @GetMapping
     fun getAll() : ResponseEntity<Iterable<GetTodoItemDto>>{
@@ -46,11 +39,6 @@ class TodoController(private val todoItemRepository: TodoItemRepository) {
 
     @PostMapping
     fun createNewTodo (@RequestBody postTodoItemDto: PostTodoItemDto) : ResponseEntity<GetTodoItemDto>{
-//        var nextId = todos.last().id
-//        nextId++
-//        todoItem.id = nextId
-//        todos.add(todoItem)
-//        return ResponseEntity.ok(todoItem)
 
         val todoItem = TodoItem(postTodoItemDto.name)
 
@@ -68,7 +56,7 @@ class TodoController(private val todoItemRepository: TodoItemRepository) {
         val todoItemForUpdadate = todoItemRepository.findById(id).orElse(null)
         var getTodoItemDto:GetTodoItemDto
         if(todoItemForUpdadate != null){
-            if(!putTodoItemDto?.name.isNullOrBlank()){
+            if(!putTodoItemDto.name.isNullOrBlank()){
                 todoItemForUpdadate.name = putTodoItemDto.name.toString()
             }
             if(putTodoItemDto.isComplete != null){
