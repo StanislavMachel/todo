@@ -8,9 +8,11 @@ import javax.persistence.Id
 
 @Entity
 data class TodoItem @JsonCreator constructor(
-        @Id @GeneratedValue @JsonProperty(access = JsonProperty.Access.READ_ONLY) var id: Long,
+        @Id
+        @GeneratedValue
+        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+        var id: Long,
         var name: String,
         var isComplete: Boolean){
-    constructor(): this(0, "", false)
     constructor(name:String) : this(0, name, false)
 }
