@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/todo")
 @RestController
-
 class TodoController(private val todoItemRepository : TodoItemRepository) {
 
     @GetMapping
     fun getAll() : ResponseEntity<Iterable<GetTodoItemDto>>{
-        //return ResponseEntity.ok(todos)
+
         val todos = todoItemRepository.findAll()
 
         val getTodoItemDtos = todos.map { todoItem: TodoItem -> GetTodoItemDto(todoItem.id, todoItem.name, todoItem.isComplete) }
@@ -27,6 +26,7 @@ class TodoController(private val todoItemRepository : TodoItemRepository) {
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long) : ResponseEntity<GetTodoItemDto>{
+
         val todo : TodoItem? = todoItemRepository.findById(id).orElse(null)
 
         if(todo != null){
@@ -54,6 +54,7 @@ class TodoController(private val todoItemRepository : TodoItemRepository) {
     fun updateNewTodo(@PathVariable id: Long, @RequestBody putTodoItemDto: PutTodoItemDto) : ResponseEntity<GetTodoItemDto>{
 
         val todoItemForUpdadate = todoItemRepository.findById(id).orElse(null)
+
         var getTodoItemDto:GetTodoItemDto
         if(todoItemForUpdadate != null){
             if(!putTodoItemDto.name.isNullOrBlank()){
