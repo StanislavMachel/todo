@@ -14,5 +14,6 @@ data class TodoItem @JsonCreator constructor(
         var id: Long,
         var name: String,
         var isComplete: Boolean){
+    constructor(): this(0, "", false)
     constructor(name:String) : this(0, name, false)
 }
