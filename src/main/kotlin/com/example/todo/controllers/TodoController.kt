@@ -5,6 +5,7 @@ import com.example.todo.dtos.todo.PostTodoItemDto
 import com.example.todo.dtos.todo.PutTodoItemDto
 import com.example.todo.model.TodoItem
 import com.example.todo.repositories.TodoItemRepository
+import com.example.todo.services.TodoService
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,26 +13,21 @@ import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/todo")
 @RestController
-class TodoController(private val todoItemRepository : TodoItemRepository) {
+class TodoController(private val todoItemRepository : TodoItemRepository, private val todoService: TodoService) {
 
     @GetMapping
     fun getAll() : ResponseEntity<Iterable<GetTodoItemDto>>{
-
-        val todos = todoItemRepository.findAll()
-
-        val getTodoItemDtos = todos.map { todoItem: TodoItem -> GetTodoItemDto(todoItem.id, todoItem.name, todoItem.isComplete) }
-
-        return ResponseEntity.ok(getTodoItemDtos)
+        return ResponseEntity.ok(todoService.findAll())
     }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long) : ResponseEntity<GetTodoItemDto>{
 
-        val todo : TodoItem? = todoItemRepository.findById(id).orElse(null)
+        val getTodoItemDto = todoService.getById(id)
 
-        if(todo != null){
-            val getTodoItem = GetTodoItemDto(todo.id, todo.name, todo.isComplete)
-            return ResponseEntity.ok(getTodoItem)
+        if(getTodoItemDto != null){
+
+            return ResponseEntity.ok(getTodoItemDto)
         }
 
         return ResponseEntity.badRequest().build()
