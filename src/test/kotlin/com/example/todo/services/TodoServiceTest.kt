@@ -81,11 +81,14 @@ class TodoServiceTest {
         val todo = TodoItem(1, "Cook dishes", false)
         val updatedTodo = TodoItem(1, "Cook", true)
         val optionalOfTodo = Optional.of(todo)
+        val putTodoItemDto = PutTodoItemDto("Cook", true )
 
         Mockito.`when`(todoItemRepository.findById(ArgumentMatchers.anyLong())).thenReturn(optionalOfTodo)
         Mockito.`when`(todoItemRepository.save(ArgumentMatchers.any(TodoItem::class.java))).thenReturn(updatedTodo)
 
-        verify(todoItemRepository, times(1)).findById(1)
+        todoService.update(1, putTodoItemDto)
+
+        verify(todoItemRepository, times(1)).findById(ArgumentMatchers.anyLong())
         verify(todoItemRepository, times(1)).save(any(TodoItem::class.java))
 
     }
