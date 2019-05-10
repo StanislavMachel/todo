@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class GetTodoItemDtoToTodoItem : Converter<GetTodoItemDto, TodoItem> {
+    @Synchronized
     override fun convert(source: GetTodoItemDto): TodoItem? {
         return TodoItem(source.id, source.name, source.isComplete)
     }

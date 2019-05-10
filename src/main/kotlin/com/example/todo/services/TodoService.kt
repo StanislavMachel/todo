@@ -7,4 +7,5 @@ interface TodoService {
     fun getAll() : Set<GetTodoItemDto>
     fun getById(id: Long) : GetTodoItemDto?
     fun update(id: Long, putTodoItemDto: PutTodoItemDto) : GetTodoItemDto
+    fun deleteById(id: Long)
 }

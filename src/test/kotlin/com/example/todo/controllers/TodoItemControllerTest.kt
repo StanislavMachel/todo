@@ -16,13 +16,11 @@ import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.util.*
 import com.fasterxml.jackson.databind.ObjectMapper
-
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 
 
 class TodoItemControllerTest {
@@ -119,6 +117,16 @@ class TodoItemControllerTest {
                 .andExpect(status().isBadRequest)
     }
 
+    @Test
+    fun deleteById(){
+        Mockito.doNothing().`when`(todoService).deleteById(ArgumentMatchers.anyLong())
+
+        mockMvc.perform(delete("/todo/1"))
+                .andExpect(status().isOk)
+
+        verify(todoService, times(1)).deleteById(ArgumentMatchers.anyLong())
+    }
+
     private fun asJsonString(obj: Any): String {
         try {
             return ObjectMapper().writeValueAsString(obj)
@@ -126,4 +134,5 @@ class TodoItemControllerTest {
             throw RuntimeException(e)
         }
     }
+
 }

@@ -13,6 +13,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
+import org.springframework.dao.EmptyResultDataAccessException
 import java.util.*
 import kotlin.IllegalArgumentException
 
@@ -91,6 +92,26 @@ class TodoServiceTest {
         verify(todoItemRepository, times(1)).findById(ArgumentMatchers.anyLong())
         verify(todoItemRepository, times(1)).save(any(TodoItem::class.java))
 
+    }
+
+    @Test
+    fun daleteByIdExistingTodoItem(){
+
+        Mockito.doNothing().`when`(todoItemRepository).deleteById(ArgumentMatchers.anyLong())
+
+        todoService.deleteById(1)
+
+        verify(todoItemRepository, times(1)).deleteById(ArgumentMatchers.anyLong())
+    }
+
+    @Test
+    fun deleteByIdTodoItemWhichNotExist(){
+
+        Mockito.doThrow(EmptyResultDataAccessException::class.java).`when`(todoItemRepository).deleteById(ArgumentMatchers.anyLong())
+
+        todoService.deleteById(1)
+
+        verify(todoItemRepository, times(1)).deleteById(ArgumentMatchers.anyLong())
     }
 
 

@@ -5,12 +5,21 @@ import com.example.todo.dtos.todo.GetTodoItemDto
 import com.example.todo.dtos.todo.PutTodoItemDto
 import com.example.todo.model.TodoItem
 import com.example.todo.repositories.TodoItemRepository
+import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.lang.IllegalArgumentException
 
 @Service
 class TodoServiceImpl(private val todoItemRepository: TodoItemRepository, private val todoItemToGetTodoItemDto: TodoItemToGetTodoItemDto) : TodoService {
+    override fun deleteById(id: Long) {
+        try {
+            todoItemRepository.deleteById(id)
+        }
+        catch (e: EmptyResultDataAccessException){ }
+    }
+
     override fun update(id: Long, putTodoItemDto: PutTodoItemDto) : GetTodoItemDto {
         val todoItemForUpdate = getTodoItemById(id) ?: throw IllegalArgumentException("TodoItem with id: $id not found.")
 

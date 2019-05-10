@@ -61,14 +61,8 @@ class TodoController(private val todoItemRepository : TodoItemRepository, privat
 
     @DeleteMapping("/{id}")
     fun deleteById(@PathVariable id: Long): ResponseEntity<Unit>{
-
-        try {
-            todoItemRepository.deleteById(id)
-        }
-        catch (e: EmptyResultDataAccessException){ }
-        finally {
-            return ResponseEntity(HttpStatus.OK)
-        }
+        todoService.deleteById(id)
+        return ResponseEntity(HttpStatus.OK)
     }
 }
 
