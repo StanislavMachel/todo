@@ -1,7 +1,9 @@
 package com.example.todo.services
 
+import com.example.todo.converters.PostTodoItemDtoToTodoItem
 import com.example.todo.converters.TodoItemToGetTodoItemDto
 import com.example.todo.dtos.todo.GetTodoItemDto
+import com.example.todo.dtos.todo.PostTodoItemDto
 import com.example.todo.dtos.todo.PutTodoItemDto
 import com.example.todo.model.TodoItem
 import com.example.todo.repositories.TodoItemRepository
@@ -12,7 +14,19 @@ import org.springframework.stereotype.Service
 import java.lang.IllegalArgumentException
 
 @Service
-class TodoServiceImpl(private val todoItemRepository: TodoItemRepository, private val todoItemToGetTodoItemDto: TodoItemToGetTodoItemDto) : TodoService {
+class TodoServiceImpl(private val todoItemRepository: TodoItemRepository,
+                      private val todoItemToGetTodoItemDto: TodoItemToGetTodoItemDto,
+                      private val postTodoItemDtoToTodoItem: PostTodoItemDtoToTodoItem) : TodoService {
+
+    override fun createNewTodo(postTodoItemDto: PostTodoItemDto): GetTodoItemDto {
+
+        val todoItem = postTodoItemDtoToTodoItem.convert(postTodoItemDto)
+
+        val newTodoItem = todoItemRepository.save(todoItem)
+
+        return todoItemToGetTodoItemDto.convert(newTodoItem)
+    }
+
     override fun deleteById(id: Long) {
         try {
             todoItemRepository.deleteById(id)

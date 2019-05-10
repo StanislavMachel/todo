@@ -1,7 +1,9 @@
 package com.example.todo.services
 
+import com.example.todo.converters.PostTodoItemDtoToTodoItem
 import com.example.todo.converters.TodoItemToGetTodoItemDto
 import com.example.todo.dtos.todo.GetTodoItemDto
+import com.example.todo.dtos.todo.PostTodoItemDto
 import com.example.todo.dtos.todo.PutTodoItemDto
 import com.example.todo.model.TodoItem
 import com.example.todo.repositories.TodoItemRepository
@@ -26,11 +28,12 @@ class TodoServiceTest {
 
 
     private var todoItemToGetTodoItemDto: TodoItemToGetTodoItemDto = TodoItemToGetTodoItemDto()
+    private var postTodoItemDtoToTodoItem : PostTodoItemDtoToTodoItem = PostTodoItemDtoToTodoItem()
 
     @Before
     fun setUp(){
         MockitoAnnotations.initMocks(this)
-        todoService = TodoServiceImpl(todoItemRepository, todoItemToGetTodoItemDto)
+        todoService = TodoServiceImpl(todoItemRepository, todoItemToGetTodoItemDto, postTodoItemDtoToTodoItem)
     }
 
     @Test
@@ -112,6 +115,17 @@ class TodoServiceTest {
         todoService.deleteById(1)
 
         verify(todoItemRepository, times(1)).deleteById(ArgumentMatchers.anyLong())
+    }
+
+    @Test
+    fun createNewTodo(){
+        val newTodo = TodoItem(1, "Cook", true)
+        val postTodoItemDto = PostTodoItemDto("Cook")
+        Mockito.`when`(todoItemRepository.save(ArgumentMatchers.any(TodoItem::class.java))).thenReturn(newTodo)
+
+        todoService.createNewTodo(postTodoItemDto)
+
+        verify(todoItemRepository, times(1)).save(ArgumentMatchers.any(TodoItem::class.java))
     }
 
 

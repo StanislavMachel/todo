@@ -1,6 +1,7 @@
 package com.example.todo.controllers
 
 import com.example.todo.dtos.todo.GetTodoItemDto
+import com.example.todo.dtos.todo.PostTodoItemDto
 import com.example.todo.dtos.todo.PutTodoItemDto
 import com.example.todo.model.TodoItem
 import com.example.todo.repositories.TodoItemRepository
@@ -26,8 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 class TodoItemControllerTest {
 
     lateinit var todoController: TodoController
-    @Mock
-    lateinit var todoItemRepository: TodoItemRepository
+
     @Mock
     lateinit var todoService: TodoService
     lateinit var mockMvc: MockMvc
@@ -35,7 +35,7 @@ class TodoItemControllerTest {
     @Before
     fun setUp(){
         MockitoAnnotations.initMocks(this)
-        todoController = TodoController(todoItemRepository, todoService)
+        todoController = TodoController(todoService)
         mockMvc = MockMvcBuilders.standaloneSetup(todoController).build()
     }
 
@@ -125,6 +125,21 @@ class TodoItemControllerTest {
                 .andExpect(status().isOk)
 
         verify(todoService, times(1)).deleteById(ArgumentMatchers.anyLong())
+    }
+
+    @Test
+    fun createNewTodo(){
+        val getTodoItemDto = GetTodoItemDto(1, "Cook dishes", false)
+        val postTodoItemDto = PostTodoItemDto("Cook dishes")
+
+        Mockito.`when`(todoService.createNewTodo(postTodoItemDto)).thenReturn(getTodoItemDto)
+
+        mockMvc.perform(post("/todo")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(asJsonString(postTodoItemDto)))
+                .andExpect(status().isOk)
+
+        verify(todoService, times(1)).createNewTodo(postTodoItemDto)
     }
 
     private fun asJsonString(obj: Any): String {
