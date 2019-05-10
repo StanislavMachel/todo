@@ -10,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import kotlin.IllegalArgumentException
 
 @RequestMapping("/todo")
 @RestController
@@ -17,7 +18,7 @@ class TodoController(private val todoItemRepository : TodoItemRepository, privat
 
     @GetMapping
     fun getAll() : ResponseEntity<Iterable<GetTodoItemDto>>{
-        return ResponseEntity.ok(todoService.findAll())
+        return ResponseEntity.ok(todoService.getAll())
     }
 
     @GetMapping("/{id}")
@@ -47,25 +48,15 @@ class TodoController(private val todoItemRepository : TodoItemRepository, privat
     }
 
     @PutMapping("/{id}")
-    fun updateNewTodo(@PathVariable id: Long, @RequestBody putTodoItemDto: PutTodoItemDto) : ResponseEntity<GetTodoItemDto>{
+    fun updateTodo(@PathVariable id: Long, @RequestBody putTodoItemDto: PutTodoItemDto) : ResponseEntity<GetTodoItemDto>{
 
-        val todoItemForUpdadate = todoItemRepository.findById(id).orElse(null)
-
-        var getTodoItemDto:GetTodoItemDto
-        if(todoItemForUpdadate != null){
-            if(!putTodoItemDto.name.isNullOrBlank()){
-                todoItemForUpdadate.name = putTodoItemDto.name.toString()
-            }
-            if(putTodoItemDto.isComplete != null){
-                todoItemForUpdadate.isComplete = putTodoItemDto.isComplete
-            }
-
-            val updatedTodoItem = todoItemRepository.save(todoItemForUpdadate)
-            getTodoItemDto = GetTodoItemDto(updatedTodoItem.id, updatedTodoItem.name, updatedTodoItem.isComplete)
-            return ResponseEntity.ok(getTodoItemDto)
+        return try {
+            val getTodoItemDto = todoService.update(id, putTodoItemDto)
+            ResponseEntity.ok(getTodoItemDto)
         }
-
-        return ResponseEntity.badRequest().build()
+        catch (e: IllegalArgumentException){
+            ResponseEntity.badRequest().build()
+        }
     }
 
     @DeleteMapping("/{id}")
